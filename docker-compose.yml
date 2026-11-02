@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  netmonitor:
+    build: .
+    container_name: netmonitor
+    restart: unless-stopped
+    network_mode: host  # needed to see all host sockets/ports
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    environment:
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL:-}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN:-}
+      - TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID:-}
+      - NETMONITOR_INTERVAL=${NETMONITOR_INTERVAL:-60}
+    volumes:
+      - ./data/netmonitor:/root/.netmonitor
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command: daemon start

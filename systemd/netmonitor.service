@@ -1,0 +1,18 @@
+[Unit]
+Description=NetMonitor 24/7 Network Monitoring Daemon
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/usr/bin/mkdir -p /root/.netmonitor/logs /root/.netmonitor/history /root/.netmonitor/backups
+ExecStart=/usr/local/bin/netmonitor daemon start --interval 60
+ExecStop=/usr/local/bin/netmonitor daemon stop
+Restart=always
+RestartSec=10
+User=root
+WorkingDirectory=/root
+EnvironmentFile=-/etc/default/netmonitor
+
+[Install]
+WantedBy=multi-user.target
