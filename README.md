@@ -5,9 +5,9 @@
 [![PyPI version](https://badge.fury.io/py/netmonitor.svg)](https://badge.fury.io/py/netmonitor)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/arena-ai/netmonitor/pulls)
-[![GitHub stars](https://img.shields.io/github/stars/arena-ai/netmonitor?style=social)](https://github.com/arena-ai/netmonitor/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/arena-ai/netmonitor?style=social)](https://github.com/arena-ai/netmonitor/network/members)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/momalekiii/netmonitor/pulls)
+[![GitHub stars](https://img.shields.io/github/stars/momalekiii/netmonitor?style=social)](https://github.com/momalekiii/netmonitor/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/momalekiii/netmonitor?style=social)](https://github.com/momalekiii/netmonitor/network/members)
 
 ---
 
@@ -37,7 +37,7 @@
 ### Install from source
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/netmonitor.git
+git clone https://github.com/momalekiii/netmonitor.git
 cd netmonitor
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\Scripts\activate
@@ -206,7 +206,7 @@ NETMONITOR_INTERVAL=60
 ## 📦 One-Command Install
 
 ```bash
-curl -LsS https://raw.githubusercontent.com/YOUR_USERNAME/netmonitor/main/install.sh | bash
+curl -LsS https://raw.githubusercontent.com/momalekiii/netmonitor/main/install.sh | bash
 ```
 
 Then: `netmonitor` or `netmonitor daemon start`.
