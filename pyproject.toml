@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "netmonitor"
-version = "1.1.0"
+version = "1.0.0"
 description = "24/7 cross-platform CLI daemon for monitoring network sockets, ports, adapters, VPNs, GeoIP, IP/domain details with Discord & Telegram webhooks, log export, and backups."
 readme = "README.md"
 requires-python = ">=3.8"
-authors = [{ name = "Arena.ai Agent", email = "agent@arena.ai" }]
+authors = [{ name = "momalekiii", email = "m.mlk9928@yahoo.com" }]
 license = { text = "MIT" }
 keywords = [
     "network", "monitoring", "sockets", "ports", "cli", "daemon",

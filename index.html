@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NetMonitor 𓅓 Network Security & Telemetry CLI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Vazirmatn:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #070709;
+      --surface: #0f0f13;
+      --surface-hover: #16161d;
+      --border: #24242e;
+      --text: #ececf1;
+      --muted: #8e8ea0;
+      --accent: #10b981;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Vazirmatn', monospace;
+      line-height: 1.6;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 24px 24px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    html[dir="rtl"] body {
+      font-family: 'Vazirmatn', 'JetBrains Mono', sans-serif;
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; direction: ltr; display: inline-block; }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      width: 100%;
+    }
+
+    /* Header */
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(7, 7, 9, 0.85);
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .nav {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+      text-decoration: none;
+    }
+
+    .brand span.symbol { color: var(--accent); font-size: 1.3rem; }
+    .badge {
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--muted);
+    }
+
+    .nav-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+    .btn {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover { background: var(--surface-hover); border-color: var(--muted); }
+    .btn-primary { background: var(--text); color: var(--bg); font-weight: 600; border-color: var(--text); }
+    .btn-primary:hover { background: #d4d4dc; }
+
+    /* Hero */
+    .hero { padding: 4.5rem 0 3rem; text-align: center; }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.3rem 0.85rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      border-radius: 99px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      max-width: 660px;
+      margin: 0 auto 2rem;
+      font-size: 0.98rem;
+    }
+
+    /* Command Box */
+    .cmd-wrapper {
+      max-width: 580px;
+      margin: 0 auto 3rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      direction: ltr;
+    }
+
+    .cmd-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--text);
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .cmd-text .prompt { color: var(--accent); user-select: none; margin-right: 0.5rem; }
+
+    /* Terminal Window */
+    .terminal {
+      background: #0a0a0d;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      text-align: left;
+      direction: ltr;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      margin-bottom: 4rem;
+    }
+
+    .term-bar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .term-dots { display: flex; gap: 6px; }
+    .term-dots span { width: 10px; height: 10px; border-radius: 50%; background: var(--border); }
+
+    .term-body {
+      padding: 1.25rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8rem;
+      line-height: 1.8;
+      color: #c9c9d6;
+      overflow-x: auto;
+    }
+
+    .t-ok { color: var(--accent); }
+    .t-warn { color: var(--warn); }
+    .t-err { color: var(--danger); }
+    .t-mod { color: #93c5fd; }
+    .t-dim { color: var(--muted); }
+
+    /* Grid */
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      transition: border-color 0.15s ease;
+    }
+
+    .card:hover { border-color: var(--muted); }
+
+    .card-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.6rem;
+    }
+
+    .card-title { font-weight: 700; font-size: 0.95rem; }
+    .card-file { font-size: 0.72rem; color: var(--accent); font-family: 'JetBrains Mono', monospace; }
+    .card-desc { font-size: 0.85rem; color: var(--muted); }
+
+    /* Quick Start */
+    .deploy-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 4rem;
+    }
+
+    .code-block {
+      background: #0a0a0d;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.85rem;
+      margin-top: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      direction: ltr;
+      text-align: left;
+      color: var(--text);
+      overflow-x: auto;
+    }
+
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    footer a { color: var(--text); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <a href="#" class="brand">
+        <span class="symbol">𓅓</span>
+        <span>netmonitor</span>
+        <span class="badge mono">v1.0</span>
+      </a>
+      <div class="nav-actions">
+        <button class="btn" id="langBtn" onclick="toggleLang()">FA / فارسی</button>
+        <a href="https://github.com/momalekiii/netmonitor" target="_blank" class="btn btn-primary">
+          <span>GitHub</span>
+          <span class="mono">↗</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="status-pill">
+        <span class="dot"></span>
+        <span data-i18n="pill">Zero-bloat Network Telemetry & Active Defense</span>
+      </div>
+      <h1 data-i18n="title">Deep Socket Visibility.<br>Automated Threat Defense.</h1>
+      <p class="subtitle" data-i18n="subtitle">
+        A modular command-line network monitoring suite featuring JA3 TLS fingerprinting, DNS leak detection, SSL transparency auditing, Fail2Ban integration, and real-time Telegram/Prometheus alerts.
+      </p>
+
+      <div class="cmd-wrapper">
+        <div class="cmd-text">
+          <span class="prompt">$</span>git clone https://github.com/momalekiii/netmonitor.git && cd netmonitor && sudo ./install.sh
+        </div>
+        <button class="btn" onclick="copyInstall(this)" data-i18n="copy">Copy</button>
+      </div>
+
+      <!-- Terminal Preview -->
+      <div class="terminal">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <div>netmonitor — cli.py --daemon</div>
+          <div class="t-ok">● ACTIVE</div>
+        </div>
+        <div class="term-body">
+          <div><span class="t-dim">20:15:01</span> <span class="t-ok">[INIT]</span>   Starting <span class="t-mod">netmonitor.monitor</span> core loop (systemd unit active)</div>
+          <div><span class="t-dim">20:15:02</span> <span class="t-ok">[OK]</span>     <span class="t-mod">uptime_monitor</span>     :: 8/8 nodes online (avg RTT: 12.4ms)</div>
+          <div><span class="t-dim">20:15:03</span> <span class="t-ok">[OK]</span>     <span class="t-mod">dns_leak</span>           :: Tunnel routing verified via <span class="t-mod">tunnel.py</span> (0 leaks)</div>
+          <div><span class="t-dim">20:15:04</span> <span class="t-ok">[OK]</span>     <span class="t-mod">ssl_transparency</span>   :: TLS cert chain & CT logs validated</div>
+          <div><span class="t-dim">20:15:08</span> <span class="t-warn">[WARN]</span>   <span class="t-mod">bandwidth_anomaly</span>  :: Traffic spike on eth0 (+320% above baseline)</div>
+          <div><span class="t-dim">20:15:09</span> <span class="t-err">[ALERT]</span>  <span class="t-mod">ja3_fingerprinting</span> :: Malicious TLS ClientHello matched [185.220.101.7]</div>
+          <div><span class="t-dim">20:15:09</span> <span class="t-ok">[ACTION]</span> <span class="t-mod">auto_remediation</span>   :: IP jailed via <span class="t-mod">fail2ban.py</span> & dispatched to <span class="t-mod">telegram_bot</span></div>
+          <div><span class="t-dim">20:15:10</span> <span class="t-ok">[METRIC]</span> <span class="t-mod">prometheus</span>         :: Exported telemetry series on :9090/metrics</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modules -->
+    <section>
+      <h2 class="section-title" data-i18n="mod_heading">Core Architecture & Modules</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m1_t">JA3 Fingerprinting</span>
+            <span class="card-file">ja3_fingerprinting.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m1_d">Profiles TLS client handshakes to detect malware, botnets, and unauthorized scanners over encrypted traffic.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m2_t">Bandwidth Anomaly</span>
+            <span class="card-file">bandwidth_anomaly.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m2_d">Continuous throughput baseline modeling to catch DDoS spikes and abnormal data exfiltration in real time.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m3_t">DNS Leak & Tunnel Guard</span>
+            <span class="card-file">dns_leak.py / tunnel.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m3_d">Monitors active VPN and tunnel interfaces to ensure zero recursive DNS leaks or unexpected route drops.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m4_t">Fail2Ban & Auto-Remediation</span>
+            <span class="card-file">auto_remediation.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m4_d">Self-healing triggers that automatically ban hostile IPs via Fail2Ban and restart degraded network services.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m5_t">SSL Transparency</span>
+            <span class="card-file">ssl_transparency.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m5_d">Audits TLS certificates and Certificate Transparency logs to prevent spoofing and unexpected expirations.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m6_t">Multi-Server & Prometheus</span>
+            <span class="card-file">prometheus.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m6_d">Syncs telemetry across remote fleet nodes (`multi_server.py`) and exposes native Prometheus metrics.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m7_t">Telegram Bot & Webhooks</span>
+            <span class="card-file">telegram_bot.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m7_d">Instant push notifications, scheduled status reports, and outbound webhooks for real-time incident response.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <span class="card-title" data-i18n="m8_t">Threat Intel & REST API</span>
+            <span class="card-file">intel.py / api.py</span>
+          </div>
+          <p class="card-desc" data-i18n="m8_d">Cross-references active connections with threat intelligence feeds and provides a clean REST API & CLI.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Deployment -->
+    <section>
+      <h2 class="section-title" data-i18n="dep_heading">Quick Deployment</h2>
+      <div class="deploy-grid">
+        <div class="card">
+          <div class="card-title" data-i18n="d1_t">1. Docker Compose</div>
+          <div class="code-block">docker compose up -d --build</div>
+        </div>
+        <div class="card">
+          <div class="card-title" data-i18n="d2_t">2. Systemd Daemon</div>
+          <div class="code-block">sudo ./install.sh<br>sudo systemctl enable --now netmonitor</div>
+        </div>
+        <div class="card">
+          <div class="card-title" data-i18n="d3_t">3. Python CLI</div>
+          <div class="code-block">pip install -e .<br>netmonitor --help</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        Crafted by <a href="https://github.com/momalekiii" target="_blank">@momalekiii</a> 𓅓
+        <span data-i18n="footer_font">Set in Vazirmatn — in memory of Saber Rastikerdar.</span>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const dict = {
+      en: {
+        pill: "Zero-bloat Network Telemetry & Active Defense",
+        title: "Deep Socket Visibility.<br>Automated Threat Defense.",
+        subtitle: "A modular command-line network monitoring suite featuring JA3 TLS fingerprinting, DNS leak detection, SSL transparency auditing, Fail2Ban integration, and real-time Telegram/Prometheus alerts.",
+        copy: "Copy",
+        mod_heading: "Core Architecture & Modules",
+        m1_t: "JA3 Fingerprinting",
+        m1_d: "Profiles TLS client handshakes to detect malware, botnets, and unauthorized scanners over encrypted traffic.",
+        m2_t: "Bandwidth Anomaly",
+        m2_d: "Continuous throughput baseline modeling to catch DDoS spikes and abnormal data exfiltration in real time.",
+        m3_t: "DNS Leak & Tunnel Guard",
+        m3_d: "Monitors active VPN and tunnel interfaces to ensure zero recursive DNS leaks or unexpected route drops.",
+        m4_t: "Fail2Ban & Auto-Remediation",
+        m4_d: "Self-healing triggers that automatically ban hostile IPs via Fail2Ban and restart degraded network services.",
+        m5_t: "SSL Transparency",
+        m5_d: "Audits TLS certificates and Certificate Transparency logs to prevent spoofing and unexpected expirations.",
+        m6_t: "Multi-Server & Prometheus",
+        m6_d: "Syncs telemetry across remote fleet nodes (multi_server.py) and exposes native Prometheus metrics.",
+        m7_t: "Telegram Bot & Webhooks",
+        m7_d: "Instant push notifications, scheduled status reports, and outbound webhooks for real-time incident response.",
+        m8_t: "Threat Intel & REST API",
+        m8_d: "Cross-references active connections with threat intelligence feeds and provides a clean REST API & CLI.",
+        dep_heading: "Quick Deployment",
+        d1_t: "1. Docker Compose",
+        d2_t: "2. Systemd Daemon",
+        d3_t: "3. Python CLI",
+        footer_font: "Typography powered by Vazirmatn — in memory of Saber Rastikerdar."
+      },
+      fa: {
+        pill: "مانیتورینگ سبک شبکه و دفاع خودکار در برابر تهدیدات",
+        title: "رصد عمیق ترافیک شبکه.<br>واکنش و دفاع کاملاً خودکار.",
+        subtitle: "مجموعه خط فرمان ماژولار برای پایش شبکه و امنیت؛ مجهز به انگشت‌نگاری JA3 TLS، تشخیص نشت DNS، بررسی گواهی‌های SSL، یکپارچگی با Fail2Ban و ارسال هشدارهای آنی به تلگرام و Prometheus.",
+        copy: "کپی",
+        mod_heading: "معماری و ماژول‌های هسته",
+        m1_t: "انگشت‌نگاری JA3 TLS",
+        m1_d: "بررسی هندشیک‌های TLS برای شناسایی بدافزارها، بات‌نت‌ها و اسکنرهای غیرمجاز در ترافیک رمزنگاری‌شده.",
+        m2_t: "تشخیص ناهنجاری پهنای باند",
+        m2_d: "مدل‌سازی لحظه‌ای ترافیک مصرفی برای تشخیص سریع حملات DDoS و خروج غیرعادی داده‌ها.",
+        m3_t: "محافظ نشت DNS و تانل",
+        m3_d: "پایش مداوم اینترفیس‌های تانل و VPN برای جلوگیری از نشت درخواست‌های DNS یا قطع ناگهانی مسیر.",
+        m4_t: "واکنش خودکار و Fail2Ban",
+        m4_d: "مسدودسازی خودکار آی‌پی‌های مهاجم با Fail2Ban و ری‌استارت سرویس‌های مختل‌شده بدون دخالت دستی.",
+        m5_t: "شفافیت گواهی SSL",
+        m5_d: "بررسی مستمر گواهی‌های TLS و لاگ‌های CT برای جلوگیری از جعل گواهی یا انقضای ناگهانی.",
+        m6_t: "پایش چند سروری و Prometheus",
+        m6_d: "تجمیع وضعیت چندین سرور به صورت همزمان و ارائه خروجی استاندارد متریک برای داشبوردهای Grafana.",
+        m7_t: "ربات تلگرام و وب‌هوک",
+        m7_d: "ارسال هشدارهای لحظه‌ای، گزارش‌های زمان‌بندی‌شده و پشتیبانی از وب‌هوک‌های اختصاصی.",
+        m8_t: "هوش تهدیدات و API",
+        m8_d: "تطبیق اتصالات فعال با دیتابیس‌های Threat Intelligence همراه با رابط خط فرمان (CLI) و REST API.",
+        dep_heading: "راه‌اندازی سریع",
+        d1_t: "۱. اجرا با داکر (Docker)",
+        d2_t: "۲. سرویس لینوکس (Systemd)",
+        d3_t: "۳. نصب مستقیم پایتون",
+        footer_font: "با فونت وزیرمتن — به یاد صابر راستی‌کردار."
+      }
+    };
+
+    let currentLang = 'en';
+
+    function toggleLang() {
+      currentLang = currentLang === 'en' ? 'fa' : 'en';
+      const html = document.documentElement;
+      html.lang = currentLang;
+      html.dir = currentLang === 'fa' ? 'rtl' : 'ltr';
+      document.getElementById('langBtn').textContent = currentLang === 'en' ? 'FA / فارسی' : 'EN / English';
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (dict[currentLang][key]) {
+          el.innerHTML = dict[currentLang][key];
+        }
+      });
+    }
+
+    function copyInstall(btn) {
+      const cmd = "git clone https://github.com/momalekiii/netmonitor.git && cd netmonitor && sudo ./install.sh";
+      navigator.clipboard.writeText(cmd);
+      const original = btn.textContent;
+      btn.textContent = currentLang === 'fa' ? 'کپی شد ✓' : 'Copied ✓';
+      setTimeout(() => btn.textContent = original, 1800);
+    }
+  </script>
+</body>
+</html>

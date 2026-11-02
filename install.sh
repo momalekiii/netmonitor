@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Interactive installer for NetMonitor
-# Usage: curl -LsS https://raw.githubusercontent.com/YOUR_USERNAME/netmonitor/main/install.sh | bash
+# Usage: curl -LsS https://raw.githubusercontent.com/momalekiii/netmonitor/main/install.sh | bash
 
 set -euo pipefail
 
-REPO="YOUR_USERNAME/netmonitor"
+REPO="momalekiii/netmonitor"
 INSTALL_DIR="${NETMONITOR_INSTALL_DIR:-$HOME/.local/share/netmonitor}"
 BIN_DIR="${NETMONITOR_BIN_DIR:-$HOME/.local/bin}"
 
